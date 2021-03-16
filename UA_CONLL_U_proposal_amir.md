@@ -1,6 +1,15 @@
 # Universal Anaphora in CoNLL-U ("CoNLL-UA")
 
-The following examples suggest extensions to CoNLL-U which would allow the publication of merged UD + UA data. Scenarios range from basic token data (no POS tags, sentence splits etc.) to fully treebanked data, which is compatible with UD validation scripts.
+The following examples suggest extensions to CoNLL-U which allow the publication of merged UD + UA data and are already being used in several valid UD corpora. Scenarios range from basic token data (no POS tags, sentence splits etc.) to fully treebanked data, which is compatible with UD validation scripts. Some advantages of this proposal:
+
+1. Uses familiar round bracket CoNLL scorer notation, which covers multiple markables starting/ending at once (e.g. `Entity=(1-person)2-organization)`), and is backwards compatible with older scorer versions
+2. Very compact: most basic coreference data (with just identity coreference and perhaps entity types) can fit inside a single MISC annotation, preventing clutter and confusion when other annotation types appear in MISC. 
+3. Human readable: easy to see where markables start and end (no need to look at token index numbers)
+4. No need for co-indexing multiple annotations for markables: since almost all information can fit into a basic `Entity=` annotation, multiple markables each get a single string of annotations, without multiple keys
+5. Trivially supports spans that cross sentence boundaries (just close the span in the relevant position)
+6. Supports entity linking/wikification without disrupting markable IDs or scorers (since the scorer accepts any arbitrary string as an identifier)
+7. Compatible with ANNIS CoNLL importer, meaning corpora in this format can be directly imported to ANNIS without any conversions or merging
+8. Proposes representations of direct edges for bridging/split antecedent and discontinuous markables (though these are no longer compatible with the CoNLL scorer by nature)
 
 ## Basic format examples
 
@@ -253,4 +262,38 @@ The following examples suggest extensions to CoNLL-U which would allow the publi
 33	at	at	ADP	IN	_	34	case	_	_
 34	St	St	PROPN	NNP	Number=Sing	32	orphan	_	Entity=(place-147
 35	Petersburg	Petersburg	PROPN	NNP	Number=Sing	34	flat	_	Entity=place-147)
+```
+
+### Discontinuous markables
+
+Discontinuities can be expressed by repeating the same markable ID multiple times (e.g. M times in total for a span with M parts), with a suffix denoting for the Nth occurrence that it is part N/M. The suggested notation is `(15-abstract[1/2]` for the opening position of a two-part abstract entity span with the group identifier 15, as in the following example:
+
+```
+# speaker = DrCellini
+1	So	so	INTJ	UH	_	9	discourse	9:discourse	Discourse=ROOT:17
+2	so	so	ADV	RB	_	3	advmod	3:advmod	_
+3	far	far	ADV	RB	Degree=Pos	9	advmod	9:advmod	_
+4	this	this	DET	DT	Number=Sing|PronType=Dem	5	det	5:det	Entity=(time-14
+5	morning	morning	NOUN	NN	Number=Sing	9	obl:tmod	9:obl:tmod	Entity=time-14)
+6	I	I	PRON	PRP	Case=Nom|Number=Sing|Person=1|PronType=Prs	9	nsubj	9:nsubj	Entity=(person-4)|SpaceAfter=No
+7	've	have	AUX	VBP	Mood=Ind|Number=Sing|Person=1|Tense=Pres|VerbForm=Fin	9	aux	9:aux	_
+8	just	just	ADV	RB	_	9	advmod	9:advmod	_
+9	read	read	VERB	VBN	Tense=Past|VerbForm=Part	0	root	0:root	_
+10	a	a	DET	DT	Definite=Ind|PronType=Art	12	det	12:det	Entity=(abstract-15[1/2]
+11	few	few	ADJ	JJ	Degree=Pos	12	amod	12:amod	_
+12	studies	study	NOUN	NNS	Number=Plur	9	obj	9:obj	Entity=abstract-15[1/2])
+13	(	(	PUNCT	-LRB-	_	18	punct	18:punct	Discourse=evaluation:18->17|SpaceAfter=No
+14	it	it	PRON	PRP	Case=Nom|Gender=Neut|Number=Sing|Person=3|PronType=Prs	18	nsubj	18:nsubj	Entity=(abstract-16)|SpaceAfter=No
+15	's	be	AUX	VBZ	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	18	cop	18:cop	_
+16	a	a	DET	DT	Definite=Ind|PronType=Art	17	det	17:det	_
+17	little	little	ADV	RB	Degree=Pos	18	obl:npmod	18:obl:npmod	_
+18	slow	slow	ADJ	JJ	Degree=Pos	9	parataxis	9:parataxis	_
+19	in	in	ADP	IN	_	21	case	21:case	_
+20	the	the	DET	DT	Definite=Def|PronType=Art	21	det	21:det	Entity=(time-17
+21	morning	morning	NOUN	NN	Number=Sing	18	obl	18:obl:in	Entity=time-17)|SpaceAfter=No
+22	)	)	PUNCT	-RRB-	_	18	punct	18:punct	_
+23	of	of	ADP	IN	_	26	case	26:case	Discourse=same-unit:19->17|Entity=(abstract-15[2/2]
+24	general	general	ADJ	JJ	Degree=Pos	26	amod	26:amod	Entity=(abstract-8
+25	nuclear	nuclear	ADJ	JJ	Degree=Pos	26	amod	26:amod	_
+26	medicine	medicine	NOUN	NN	Number=Sing	12	nmod	12:nmod:of	Entity=abstract-15[2/2])abstract-8)
 ```
