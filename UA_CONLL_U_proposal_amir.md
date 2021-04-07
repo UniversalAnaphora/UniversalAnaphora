@@ -3,13 +3,14 @@
 The following examples suggest extensions to CoNLL-U which allow the publication of merged UD + UA data and are already being used in several valid UD corpora. Scenarios range from basic token data (no POS tags, sentence splits etc.) to fully treebanked data, which is compatible with UD validation scripts. Some advantages of this proposal:
 
 1. Uses familiar round bracket CoNLL scorer notation, which covers multiple markables starting/ending at once (e.g. `Entity=(1-person)2-organization)`), and is backwards compatible with older scorer versions
-2. Very compact: most basic coreference data (with just identity coreference and perhaps entity types) can fit inside a single MISC annotation, preventing clutter and confusion when other annotation types appear in MISC. 
+2. Very compact: most basic coreference data (with just identity coreference and perhaps entity types) can fit inside a single MISC annotation, preventing clutter and confusion when other annotation types appear in MISC. Keys for annotation values are declared only once at the top.
 3. Human readable: easy to see where markables start and end (no need to look at token index numbers)
 4. No need for co-indexing multiple annotations for markables: since almost all information can fit into a basic `Entity=` annotation, multiple markables each get a single string of annotations, without multiple keys
 5. Trivially supports spans that cross sentence boundaries (just close the span in the relevant position)
 6. Supports entity linking/wikification without disrupting markable IDs or scorers (since the scorer accepts any arbitrary string as an identifier)
-7. Compatible with ANNIS CoNLL importer, meaning corpora in this format can be directly imported to ANNIS without any conversions or merging
-8. Proposes representations of direct edges for bridging/split antecedent and discontinuous markables (though these are no longer compatible with the CoNLL scorer by nature)
+7. Supports metadata
+8. Compatible with ANNIS CoNLL importer, meaning corpora in this format can be directly imported to ANNIS without any conversions or merging
+9. Proposes representations of direct edges for bridging/split antecedent and discontinuous markables (though these are no longer compatible with the CoNLL scorer by nature)
 
 ## Basic format examples
 
@@ -76,9 +77,13 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * Both types of information are combined
   * Singletons can be expressed by an unrepeated index
   * Note that coref scorers don't have to be disturbed by entity types, since technically we could consider `place-1` to be a monolithic ID, which is just as unique as `1` across mentions
+  * Names for key-value annotations can be specified at the top of the document following the CoNLL-U-plus `# global.` format
+    * Here `# global.Entity` specifies the annotation names inside `Entity` annotations, indicating that "place" is the value of an annotation called `entity`
+    * The special value `GRP` indicates that this position in the string is reserved for the coreference group ID
 
 ```
 # newdoc id = GUM_voyage_tulsa
+# global.Entity = entity-GRP
 1	Tulsa	_	_	_	_	_	_	_	Entity=(place-1)
 2	Tulsa	_	_	_	_	_	_	_	Entity=(place-1)
 3	is	_	_	_	_	_	_	_	_
@@ -106,9 +111,11 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * Entity linking or 'Wikification' can be added using the same notation, as the last portion after the separator
   * Literal hyphens in the entity link identifier should be escaped as `&#45;` if needed
   * The following example uses GUM's convention of Wikipedia page identifiers as entity identifiers
+  * The annotation names `entity` and `identity` are indicated using the `# global.Entity` header
 
 ```
 # newdoc id = GUM_voyage_tulsa
+# global.Entity = entity-GRP-identity
 1	Tulsa	_	_	_	_	_	_	_	Entity=(place-1-Tulsa)
 2	Tulsa	_	_	_	_	_	_	_	Entity=(place-1-Tulsa)
 3	is	_	_	_	_	_	_	_	_
@@ -139,6 +146,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   
 ```
 # newdoc id = GUM_voyage_tulsa
+# global.Entity = entity-GRP
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
 1	Tulsa	Tulsa	PROPN	NNP	Number=Sing	0	root	_	Entity=(place-1)
@@ -161,25 +169,26 @@ The following examples suggest extensions to CoNLL-U which allow the publication
 
   * For fuzzy matching and other purposes, it can be useful to have a minimum or core span which systems must identify for each entity.
   * In many contexts, this will be the syntactic head of the phrase, but we need some facilities in case the min span is multiple, possible discontinuous tokens
-  * Proposal: add min spec to entity brackets, with token indices refering to position within entity (not token IDs in sentence, in case the entity spans multiple sentences). Token indices can be comma separated, e.g. `(place-2-min:4,5` means a place entity, unique entity ID 2, begins on this line, and the min span is tokens 4 and 5 of this entity span.
+  * Proposal: add min spec to entity brackets, with token indices refering to position within entity (not token IDs in sentence, in case the entity spans multiple sentences). Token indices can be comma separated, e.g. `(place-2-4,5` means a place entity, unique entity ID 2, begins on this line, and the min span is tokens 4 and 5 of this entity span.
   
 ```
 # newdoc id = GUM_voyage_tulsa
+# global.Entity = entity-GRP-min
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
-1	Tulsa	Tulsa	PROPN	NNP	Number=Sing	0	root	_	Entity=(place-1-min:1)
+1	Tulsa	Tulsa	PROPN	NNP	Number=Sing	0	root	_	Entity=(place-1-1)
 
 # sent_id = GUM_voyage_tulsa-2
 # text = Tulsa is in the Green Country region of Oklahoma.
-1	Tulsa	Tulsa	PROPN	NNP	Number=Sing	7	nsubj	_	Entity=(place-1-min:1)
+1	Tulsa	Tulsa	PROPN	NNP	Number=Sing	7	nsubj	_	Entity=(place-1-1)
 2	is	be	AUX	VBZ	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	7	cop	_	_
 3	in	in	ADP	IN	_	7	case	_	_
-4	the	the	DET	DT	Definite=Def|PronType=Art	7	det	_	Entity=(place-2-min:4
+4	the	the	DET	DT	Definite=Def|PronType=Art	7	det	_	Entity=(place-2-4
 5	Green	Green	PROPN	NNP	Number=Sing	6	amod	_	_
 6	Country	Country	PROPN	NNP	Number=Sing	7	compound	_	_
 7	region	region	NOUN	NN	Number=Sing	0	root	_	_
 8	of	of	ADP	IN	_	9	case	_	_
-9	Oklahoma	Oklahoma	PROPN	NNP	Number=Sing	7	nmod	_	Entity=(place-3-min:1)place-2-min:4)|SpaceAfter=No
+9	Oklahoma	Oklahoma	PROPN	NNP	Number=Sing	7	nmod	_	Entity=(place-3-1)place-2-4)|SpaceAfter=No
 10	.	.	PUNCT	.	_	1	punct	_	_  
 ```
 
@@ -296,4 +305,33 @@ Discontinuities can be expressed by repeating the same markable ID multiple time
 24	general	general	ADJ	JJ	Degree=Pos	26	amod	26:amod	Entity=(abstract-8
 25	nuclear	nuclear	ADJ	JJ	Degree=Pos	26	amod	26:amod	_
 26	medicine	medicine	NOUN	NN	Number=Sing	12	nmod	12:nmod:of	Entity=abstract-15[2/2])abstract-8)
+```
+
+## Other details
+
+### Metadata
+
+Metadata can be specified using a comment line following the `# newdoc` declaration using a special prefix `meta::`. For example:
+
+```CoNLL-U
+# newdoc id = maz-00001
+# global.Entity = GRP-phrase_type-complex_np-np_form-referentiality-grammatical_role-ambiguity
+# meta::id = 00001
+# meta::date = 30.10.2002
+# meta::section = UNKNOWN
+# meta::author = STEPHAN BREIDING
+# meta::header = Auf Eis gelegt
+# sent_id = maz-00001-1
+1	Auf	auf	ADP	APPR	_	2	case	_	_
+2	Eis	Eis	NOUN	NN	_	3	obl	_	_
+3	gelegt	legen	VERB	VVPP	_	0	root	_	_
+
+# sent_id = maz-00001-2
+1	Dagmar	Dagmar	PROPN	NE	_	3	nsubj	_	Entity=(1-np-simple-ne-new-sbj-unambig
+2	Ziegler	Ziegler	PROPN	NE	_	1	flat	_	Entity=1-np-simple-ne-new-sbj-unambig)
+3	sitzt	sitzen	VERB	VVFIN	_	0	root	_	_
+4	in	in	ADP	APPR	_	6	case	_	Entity=(2-pp-simple-defnp-discourse_cataphor-other-unambig
+5	der	der	DET	ART	_	6	det	_	_
+6	Schuldenfalle	Schuldenfalle	NOUN	NN	_	3	obl	_	Entity=2-pp-simple-defnp-discourse_cataphor-other-unambig)
+7	.	--	PUNCT	$.	_	3	punct	_	_
 ```
