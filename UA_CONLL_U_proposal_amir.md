@@ -22,7 +22,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * Since CoNLL-U demands capitalized key-value annotations with `=`, we use `Entity=`, which can be used for NER, coref, or both (see below)
   * The contents of the Entity annotation are compatible with the existing conll coref scorer
   
-```
+```CoNLL-U
 # newdoc id = GUM_voyage_tulsa
 1	Tulsa	_	_	_	_	_	_	_	Entity=(1)
 2	Tulsa	_	_	_	_	_	_	_	Entity=(1)
@@ -50,7 +50,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * All entities of the same type have the same label, coref is not indicated
   * Note that if we have spans with conflicting hierarchy, indices must be used as above (but will never repeat, since we have no coref)
 
-```
+```CoNLL-U
 # newdoc id = GUM_voyage_tulsa
 1	Tulsa	_	_	_	_	_	_	_	Entity=(place)
 2	Tulsa	_	_	_	_	_	_	_	Entity=(place)
@@ -81,7 +81,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
     * Here `# global.Entity` specifies the annotation names inside `Entity` annotations, indicating that "place" is the value of an annotation called `entity`
     * The special value `GRP` indicates that this position in the string is reserved for the coreference group ID
 
-```
+```CoNLL-U
 # newdoc id = GUM_voyage_tulsa
 # global.Entity = entity-GRP
 1	Tulsa	_	_	_	_	_	_	_	Entity=(place-1)
@@ -113,7 +113,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * The following example uses GUM's convention of Wikipedia page identifiers as entity identifiers
   * The annotation names `entity` and `identity` are indicated using the `# global.Entity` header
 
-```
+```CoNLL-U
 # newdoc id = GUM_voyage_tulsa
 # global.Entity = entity-GRP-identity
 1	Tulsa	_	_	_	_	_	_	_	Entity=(place-1-Tulsa)
@@ -144,7 +144,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * Note that multiple annotations in the MISC column (col 10) are pipe-separated, based on the conll spec (see `SpaceAfter` below for example)
   * For more information about UD tagsets, morphological categories, etc. see https://universaldependencies.org/format.html
   
-```
+```CoNLL-U
 # newdoc id = GUM_voyage_tulsa
 # global.Entity = entity-GRP
 # sent_id = GUM_voyage_tulsa-1
@@ -171,7 +171,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * In many contexts, this will be the syntactic head of the phrase, but we need some facilities in case the min span is multiple, possible discontinuous tokens
   * Proposal: add min spec to entity brackets, with token indices refering to position within entity (not token IDs in sentence, in case the entity spans multiple sentences). Token indices can be comma separated, e.g. `(place-2-4,5` means a place entity, unique entity ID 2, begins on this line, and the min span is tokens 4 and 5 of this entity span.
   
-```
+```CoNLL-U
 # newdoc id = GUM_voyage_tulsa
 # global.Entity = entity-GRP-min
 # sent_id = GUM_voyage_tulsa-1
@@ -201,7 +201,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * Since more mentions can appear before and after the split antecedent, we need a way to mark which mention is the anaphor
   * Proposal: Use an additional `Split` annotation referencing each antecedent link from the anaphor to its antecedent, which will appear at the first token of the anaphor, e.g. `Split=person-1<person-3,person-2<person-3` means that person-3, which begins at this line, refers back to `person-1` and `person-2`
   
-```
+```CoNLL-U
 # sent_id = GUM_bio_bernoulli-14
 # text = He is said to have had a bad relationship with his father.
 # s_type = decl
@@ -234,7 +234,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
   * For example, we need to distinguish `The car <- the door <- the handle` (a chain) from `The car <- the door, (the car) <- the wheel` (two bridging anaphora to the same antecedent)
   * Proposal: use the same logic as for Split, using an annotation called `Bridge` (possibly we can add subtypes of bridging as well, similar to dependency subtypes)
 
-```
+```CoNLL-U
 # sent_id = GUM_bio_gordon-32
 1	An	a	DET	DT	Definite=Ind|PronType=Art	6	det	_	Discourse=joint:75->74|Entity=(abstract-142
 2	incomplete	incomplete	ADJ	JJ	Degree=Pos|Polarity=Neg	6	amod	_	_
@@ -277,7 +277,7 @@ The following examples suggest extensions to CoNLL-U which allow the publication
 
 Discontinuities can be expressed by repeating the same markable ID multiple times (e.g. M times in total for a span with M parts), with a suffix denoting for the Nth occurrence that it is part N/M. The suggested notation is `(15-abstract[1/2]` for the opening position of a two-part abstract entity span with the group identifier 15, as in the following example:
 
-```
+```CoNLL-U
 # speaker = DrCellini
 1	So	so	INTJ	UH	_	9	discourse	9:discourse	Discourse=ROOT:17
 2	so	so	ADV	RB	_	3	advmod	3:advmod	_
