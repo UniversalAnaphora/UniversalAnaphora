@@ -1,2 +1,2 @@
 # UniversalAnaphora
-An initiative to collect and distribute resources for co-reference resolution in a unified standard.
+An initiative to collect and distribute resources for anaphora resolution (coreference) in a unified standard.
