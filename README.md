@@ -5,5 +5,5 @@ Universal Anaphora is an initiative to collect and distribute resources for anap
 This repository contains the following folders:
 
 * [datasets](data): list of currently available datasets
-* [software](): scorers for datasets in UA format
+* [software](software): scorers for datasets in UA format
 * [documents](documents): a variety of documents including markup proposals and meetings slides
