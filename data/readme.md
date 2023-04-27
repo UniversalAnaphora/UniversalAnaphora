@@ -1,4 +1,4 @@
-# Universal Anaphora Data Repositories #
+# Repositories of corpora annotated for anaphora / coreference according to the Universal Anaphora / CorefUD schemes #
 
 This is the list of the repositories available from the Universal Anaphora Github, in either UA Exploded or UA Compact format
 
