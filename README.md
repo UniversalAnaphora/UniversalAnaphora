@@ -1,5 +1,6 @@
 # UniversalAnaphora
-An initiative to collect and distribute resources for anaphora resolution (coreference) in a unified standard.
+
+This is an initiative to collect and distribute resources for anaphora resolution (coreference) according to community-agreed on guidelines and using  a unified standard.
 
 This repository contains the following folders:
 
