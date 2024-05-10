@@ -25,7 +25,7 @@ The proposed format is meant to encode the same information as, and be convertib
   
   
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_voyage_tulsa
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
@@ -63,7 +63,7 @@ The proposed format is meant to encode the same information as, and be convertib
   * We do not provide any annotations apart from  the anaphoric information in the following examples,  we just include the mandatory non-anaphoric layers.
   
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_voyage_tulsa
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
@@ -102,7 +102,7 @@ The proposed format is meant to encode the same information as, and be convertib
   * In UA exploded, a MIN feature can added to the IDENTITY column in the line of the first token in the markable.
 
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_voyage_tulsa
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
@@ -155,7 +155,7 @@ The proposed format is meant to encode the same information as, and be convertib
 
 
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_voyage_tulsa
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
@@ -195,17 +195,17 @@ Although some of these types of anaphoric reference  (e.g., split antecedent ana
 
 ### Split antecedent anaphors
 
-  * Split antecedent anaphors are represented in an additional SPLIT column, in which at the beginning of one mention of each antecedent of the split anaphor the entity is specified as being an element of the entity to which the split anaphor refers to.
+  * Split antecedent anaphors are represented in the Identity column, by specifying at the beginning of one mention of each antecedent of the split anaphor that that  entity is an ElementOf the entity to which the split anaphor refers to.
   * This is illustrated in the following highly simplified artificial example.
 
 ```
 # newdoc id = Artificial_example_2
 # sent_id = Artificial_example-1
-              Identity						     Split   
+              Identity						     
 
-1    John     (EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)    EntityID=1|ElementOf=3
+1    John     (EntityID=1|MarkableID=markable_1|Min=1|SemType=dn|ElementOf=3) 
 2    met                                                                              
-3    Mary     (EntityID=2|MarkableID=markable_2|Min=2|SemType=dn)    EntityID=2|ElementOf=3
+3    Mary     (EntityID=2|MarkableID=markable_2|Min=2|SemType=dn|ElementOf=3) 
 4    .
 5    They     (EntityID=3|MarkableID=markable_3|Min=2|SemType=do)                                 
 6    went
@@ -213,17 +213,17 @@ Although some of these types of anaphoric reference  (e.g., split antecedent ana
 ```
 
 
-  * In the following real life example from GUM, in association with one mention of Entity 1, Bernoulli (*He*) and one mention of his father, Entity 3, there is a specified in the SPLIT column that these entities are  elements of entity 4, the plural entity referred to by *them*. (Note that further references to 4 are still encoded in the Identity column)
-  * This example also illustrates the need to specify in SPLIT the Entity which is an element of the set as nested mentions are possible
+  * In the following real life example from GUM, in association with one mention of Entity 1, Bernoulli (*He*) and one mention of his father, Entity 3, it is specified in the Identity column that these entities are  elements of entity 4, the plural entity referred to by *them*. (Note that further references to 4 are still encoded in the Identity column)
+  * This example also illustrates the need to specify the Entity which is an element of the set as nested mentions are possible
   * Line 11 illustrates the use of a @ to separate the opening information for markable_3 and markable_4 
   
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_bio_bernoulli
 # sent_id = GUM_bio_bernoulli-14
 # text = He is said to have had a bad relationship with his father.
 # s_type = decl
-1	He	he	PRON	PRP	Case=Nom|Gender=Masc|Number=Sing|Person=3|PronType=Prs	3	nsubj:pass	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=do)	EntityID=1|ElementOf=4
+1	He	he	PRON	PRP	Case=Nom|Gender=Masc|Number=Sing|Person=3|PronType=Prs	3	nsubj:pass	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=do|ElementOf=4)	
 2	is	be	AUX	VBZ	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	3	aux:pass	_	_	_	_
 3	said	say	VERB	VBN	Tense=Past|VerbForm=Part			0	root	_	_	_	_		
 4	to	to	PART	TO	_	6	mark	_	_		_	_	
@@ -233,7 +233,7 @@ Although some of these types of anaphoric reference  (e.g., split antecedent ana
 8	bad	bad	ADJ	JJ	Degree=Pos	9	amod	_	_	_	_
 9	relationship	relationship	NOUN	NN	Number=Sing	6	obj	_	_	_	_
 10	with	with	ADP	IN	_	12	case	_	_	_	_
-11	his	his	PRON	PRP$	Gender=Masc|Number=Sing|Person=3|Poss=Yes|PronType=Prs	12	nmod:poss	_	_	(EntityId=3|MarkableId=markable_3|Min=12|SemType=dn@(EntityId=1|MarkableId=markable_4|Min=11|SemType=do)	EntityID=3|ElementOf=4	
+11	his	his	PRON	PRP$	Gender=Masc|Number=Sing|Person=3|Poss=Yes|PronType=Prs	12	nmod:poss	_	_	(EntityId=3|MarkableId=markable_3|Min=12|SemType=dn@(EntityId=1|MarkableId=markable_4|Min=11|SemType=do|ElementOf=4)	
 12	father	father	NOUN	NN	Number=Sing	9	nmod	_	_		)	_		
 13	.	.	PUNCT	.	_	3	punct	_	_	_					_		_
 
@@ -246,9 +246,11 @@ Although some of these types of anaphoric reference  (e.g., split antecedent ana
 17	them	they	PRON	PRP	Case=Acc|Number=Plur|Person=3|PronType=Prs	2	nmod	_	_   	(EntityId=4|MarkableID=markable_6|Min=17|SemType=do))	_
 ```
 
+  * Note that a distinct Split layer was proposed in the original markup document, but was subsequently eliminated.
+
 ### Bridging references
 
-  * Like  the information about Split antecedents,  Bridging information is stored in a separate  Bridging column.
+  * Bridging information is stored in a separate  Bridging column.
   * The bridging reference informaton is specified in the first line of the bridging mention.
   * The information provided is the same as in CRAC 2018, but using a different syntax. The full specification is  ** MarkableID=**markableID**|Rel=**rel**|MentionAnchor=**mention ID**|EntityAnchory=**entity ID** but it is expected that not all corpora will provide all of this information so only the MarkableID and one of MentionAnchor or EntityAnchor are required
   * The notation is schematically illustrated in the following example:
@@ -269,11 +271,11 @@ door         )
 * Here is a real life example:
 
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_bio_gordon
 # sent_id = GUM_bio_gordon-32
 # text = An incomplete and faulty German translation , edited by Dr Moritz Posselt ( Tagebuch des Generals Patrick Gordon ) was published , the first volume at Moscow in 1849, the second at St Petersburg
-1	An	a	DET	DT	Definite=Ind|PronType=Art	6	det	_	_ (EntityID=1|MarkableID=markable_1|Min=6|SemType=dn 	  _ 	_
+1	An	a	DET	DT	Definite=Ind|PronType=Art	6	det	_	_ (EntityID=1|MarkableID=markable_1|Min=6|SemType=dn 	   	_
 2	incomplete	incomplete ADJ JJ Degree=Pos|Polarity=Neg	6	amod	_	_ _							  _	_
 3	and	and	CCONJ	CC	_		4	cc	_	_	_	_
 4	faulty	faulty	ADJ	JJ	Degree=Pos	2	conj	_	_	_	_	_
@@ -282,11 +284,11 @@ door         )
 7	,	,	PUNCT	,	_		8	punct	_	_	_	_	_
 8	edited	edit	VERB	VBN	Tense=Past|VerbForm=Part	6	acl	_	_	_	_	_
 9	by	by	ADP	IN	_		10	case	_	_	_	_	_
-10	Dr	Dr	PROPN	NNP	Number=Sing	8	obl	_	_	(EntityID=2|Markable_ID=markable_2|Min=11,12|SemType=dn	_	_
+10	Dr	Dr	PROPN	NNP	Number=Sing	8	obl	_	_	(EntityID=2|Markable_ID=markable_2|Min=11,12|SemType=dn		_
 11	Moritz	Moritz	PROPN	NNP	Number=Sing	10	flat	_	_	_							_	_
 12	Posselt	Posselt	PROPN	NNP	Number=Sing	10	flat	_	_	)							_	_
 13	(	(	PUNCT	-LRB-	_	18	punct	_	_	_	_							_
-14	Tagebuch Tagebuch X	FW	_	18	compound _	_	(EntityID=1-Pseudo|MarkableID=markable_3|Min=14-17|SemType=predicate	_	_
+14	Tagebuch Tagebuch X	FW	_	18	compound _	_	(EntityID=1-Pseudo|MarkableID=markable_3|Min=14-17|SemType=predicate		_
 15	des	des	X	FW	_	18	compound _	_	_									_	_
 16	Generals	Generals	X	FW	_	18	compound	_	_							_	
 17	Patrick	Patrick	PROPN	NNP	Number=Sing	18	compound	_	_	_							_	_
@@ -295,18 +297,18 @@ door         )
 20	was	be	AUX	VBD	Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin	21	aux:pass	_	_  	_	_	_	_ 
 21	published	publish	VERB	VBN	Tense=Past|VerbForm=Part	0	root	_	_		_	_  	_
 22	,	,	PUNCT	,	_	25	punct	_	_
-23	the	the	DET	DT	Definite=Def|PronType=Art	25	det	_	_	(EntityID=3|MarkableID=markable_4|Min=25|SemType=dn	_	MarkableID=markable_4|Rel=poss|MentionAnchor=markable_1|EntityAnchor=1
+23	the	the	DET	DT	Definite=Def|PronType=Art	25	det	_	_	(EntityID=3|MarkableID=markable_4|Min=25|SemType=dn	MarkableID=markable_4|Rel=poss|MentionAnchor=markable_1|EntityAnchor=1
 24	first	first	ADJ	JJ	Degree=Pos|NumType=Ord	25	amod	_	_	_	_							_
 25	volume	volume	NOUN	NN	Number=Sing	21	parataxis	_	_	)	_
 26	at	at	ADP	IN	_	27	case	_	_	_	_				_		_
-27	Moscow	Moscow	PROPN	NNP	Number=Sing	25	orphan	_	_	(EntityID=4|MentionID=markable_5|Min=27|SemType=dn)	_	_
+27	Moscow	Moscow	PROPN	NNP	Number=Sing	25	orphan	_	_	(EntityID=4|MentionID=markable_5|Min=27|SemType=dn)		_
 28	in	in	ADP	IN	_	29	case	_	_	_					_		_	_
 29	1849	1849	NUM	CD	NumType=Card	25	orphan	_	_					(EntityID=5|MentionID=markable_6|Min=29|SemType=dn)	_
 30	,	,	PUNCT	,	_	32	punct	_	_	_					_		_	_
 31	the	the	DET	DT	Definite=Def|PronType=Art	32	det	_	_			(EntityID=6|MarkableID=markable_7|Min=31|SemType=dn	MarkableID=markable_7|Rel=poss|MentionAnchor=markable_1|EntityAnchor=1
 32	second	second	ADJ	JJ	Degree=Pos|NumType=Ord	25	conj	_	_	_
 33	at	at	ADP	IN	_	34	case	_	_	_	_				_		_
-34	St	St	PROPN	NNP	Number=Sing	32	orphan	_	_	(EntityID=7|MentionID=markable_8|Min=34,35|SemType=dn	_
+34	St	St	PROPN	NNP	Number=Sing	32	orphan	_	_	(EntityID=7|MentionID=markable_8|Min=34,35|SemType=dn	
 35	Petersburg	Petersburg	PROPN	NNP	Number=Sing	34	flat	_	_						_
 ```
 
@@ -320,15 +322,15 @@ door         )
 # newdoc id = Artificial_example_4
 # sent_id = Artificial_example-1
 # text = John met Mary.
-1	John	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)	_	_	(EntityID=1-DD|MarkableID=dd_markable_1|Min=2|SemType=dn
+1	John	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)		_	(EntityID=1-DD|MarkableID=dd_markable_1|Min=2|SemType=dn
 2	met	_	_	_	_	_	_	_	_	_							_	_	_
-3	Mary	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_2|Min=3|SemType=dn)	_	_	_
+3	Mary	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_2|Min=3|SemType=dn)		_	_
 4	.	_	_	_	_	_	_	_	_			_		_	_	)
 
 
 # sent_id = Artificial_example-2
 # text = That is not true .
-5	That	_	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_3|Min=5|SemType=dn)		_	_	(EntityID=1-DD|MarkableID=dd_markable_2|Min=5|SemType=do) 
+5	That	_	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_3|Min=5|SemType=dn)			_	(EntityID=1-DD|MarkableID=dd_markable_2|Min=5|SemType=do) 
 6	is	_	_	_	_	_	_	_	_ 			_		_	_	_	_
 7	not	_	_	_	_	_	_	_	_			_		_	_	_	_
 8	true	_	_	_	_	_	_	_	_			_		_	_	_	_
@@ -341,25 +343,25 @@ door         )
   * In the following example of use of the Reference column to encode entity linking we only illustrate the Reference column ignoring SPlit, Bridging and Discourse_Deixis. The Reference column is filled with the Wikipedia link for the entity.
 
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY  BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_voyage_tulsa
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
-1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)	_	_	_	Tulsa,_Oklahoma
+1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)		_	_	Tulsa,_Oklahoma
 
 # sent_id = GUM_voyage_tulsa-2
 # text = Tulsa is in the Green Country region of Oklahoma
 2	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_2|Min=2|SemType=do)
 3	is	_	_	_	_	_	_	_	_	_
 4	in	_	_	_	_	_	_	_	_	_
-5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7|SemType=dn	_	_	_	Green_Country	
+5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7|SemType=dn		_	_	Green_Country	
 6	Green	_	_	_	_	_	_	_	_	_	_
 7	Country	_	_	_	_	_	_	_	_	_
 8	region	_	_	_	_	_	_	_	_	_
 9	of	_	_	_	_	_	_	_	_
 _
-10	Oklahoma	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_4|Min=10|SemType=dn))	_	_	_	Oklahoma
-11	.	_	_	_	_	_	_	_	_
+10	Oklahoma	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_4|Min=10|SemType=dn))		_	_	Oklahoma
+11	.	_	_	_	_	_		_	_
 
 # sent_id = GUM_voyage_tulsa-3
 # text = It is also called "T-town"
@@ -377,7 +379,7 @@ _
 * In the following example from the TRAINS corpus 
 
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = d91-1-1
 # sent_id = d91-1-1_1.1
 # speaker_id = M
@@ -387,7 +389,7 @@ _
 # sent_id = 1.2
 # speaker_id = M
 # text = I have to
-2	I	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn) _	_	_	M	_
+2	I	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn) 	_	_	M	_
 3	have	_	_	_	_	_	_	_	_	_
 4	to	_	_	_	_	_	_	_	_	_
 
@@ -395,13 +397,13 @@ _
 # sent_id = d91-1-1_1.3
 # speaker_id = M
 # text = ship a boxcar of oranges to Bath by 8 o'clock today
-5	ship	_	_	_	_	_	_	_	_	_	_	_	_
-6	a	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_2|Min=7|SemType=dn)	_	_	_	_	_
+5	ship	_	_	_	_	_	_	_	_	_	_	_	
+6	a	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_2|Min=7|SemType=dn		_	_	_	_
 7	boxcar	_	_	_	_	_	_	_	_	_
 8	of	_	_	_	_	_	_	_	_	_
-9	oranges	_	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_3|Min=9|SemType=dn)
+9	oranges	_	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_3|Min=9|SemType=dn))
 10	to	_	_	_	_	_	_	_	_	
-11	Bath	_	_	_	_	_	_	_	_	)
+11	Bath	_	_	_	_	_	_	_	_	(EntityID=4|MarkableID=markable_4|Min=11|SemType=dn)		_	_	Bath
 12	by	_	_	_	_	_	_	_	_
 13	8       _	_	_	_	_	_	_	_
 14	o'clock _	_	_	_	_	_	_	_
@@ -429,18 +431,18 @@ but a different order is possible using the CONLL-U Plus format. In the examples
   * This information is specified using the same format as the Feats column
 
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = GUM_voyage_tulsa
 # sent_id = GUM_voyage_tulsa-1
 # text = Tulsa
-1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)	_	_	_	Tulsa,_Oklahoma	Entity_Type=place|Genericity=generic-no
+1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)		_	_	Tulsa,_Oklahoma	Entity_Type=place|Genericity=generic-no
 
 # sent_id = GUM_voyage_tulsa-2
 # text = Tulsa is in the Green Country region of Oklahoma
-2	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_2|Min=2|SemType=do)	_	_	_	_	Entity_Type=place|Genericity=generic-no
+2	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_2|Min=2|SemType=do)		_	_	_	Entity_Type=place|Genericity=generic-no
 3	is	_	_	_	_	_	_	_	_	_
 4	in	_	_	_	_	_	_	_	_	_
-5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7|SemType=dn	_	_	_	Green_Country	Entity_Type=place|Genericity=generic-no	
+5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7|SemType=dn		_	_	Green_Country	Entity_Type=place|Genericity=generic-no	
 6	Green	_	_	_	_	_	_	_	_	_	_
 7	Country	_	_	_	_	_	_	_	_	_
 8	region	_	_	_	_	_	_	_	_	_
@@ -451,7 +453,7 @@ _
 
 # sent_id = GUM_voyage_tulsa-3
 # text = It is also called "T-town"
-12	It	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_5|Min=12|SemType=do)	Entity_Type=place|Genericity=generic-no
+12	It	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_5|Min=12|SemType=do)	_	_	_	Entity_Type=place|Genericity=generic-no
 13	is	_	_	_	_	_	_	_	_	_
 14	also	_	_	_	_	_	_	_	_	_
 15	called	_	_	_	_	_	_	_	_	_
@@ -471,11 +473,11 @@ _
   * Discourse structure information could be encoded in its own column following the previous layers using existing standards - the example below follows  the GUM format for RST used in Amir Zeldes' proposal for the compact format.
 
 ```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY SPLIT BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM RST
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM RST
 # newdoc id = GUM_bio_gordon
 # sent_id = GUM_bio_gordon-32
 # text = An incomplete and faulty German translation , edited by Dr Moritz Posselt ( Tagebuch des Generals Patrick Gordon ) was published , the first volume at Moscow in 1849, the second at St Petersburg
-1	An	a	DET	DT	Definite=Ind|PronType=Art	6	det	_	_ (EntityID=1|MarkableID=markable_1|Min=6|SemType=dn 	  _ 	_      _  _	_   Discourse=joint:75->74
+1	An	a	DET	DT	Definite=Ind|PronType=Art	6	det	_	_ (EntityID=1|MarkableID=markable_1|Min=6|SemType=dn 	  	_      _  _	_   Discourse=joint:75->74
 2	incomplete	incomplete ADJ JJ Degree=Pos|Polarity=Neg	6	amod	_	_ _							  _	_
 3	and	and	CCONJ	CC	_		4	cc	_	_	_	_
 4	faulty	faulty	ADJ	JJ	Degree=Pos	2	conj	_	_	_	_	_
@@ -497,13 +499,13 @@ _
 20	was	be	AUX	VBD	Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin	21	aux:pass	_	_  	_	_	_	_ Discourse=same-unit:78->75
 21	published	publish	VERB	VBN	Tense=Past|VerbForm=Part	0	root	_	_		_	_  	_
 22	,	,	PUNCT	,	_	25	punct	_	_
-23	the	the	DET	DT	Definite=Def|PronType=Art	25	det	_	_	(EntityID=3|MarkableID=markable_4|Min=25|SemType=dn	_	MarkableID=markable_4|Rel=poss|MentionAnchor=markable_1|EntityAnchor=1
+23	the	the	DET	DT	Definite=Def|PronType=Art	25	det	_	_	(EntityID=3|MarkableID=markable_4|Min=25|SemType=dn		MarkableID=markable_4|Rel=poss|MentionAnchor=markable_1|EntityAnchor=1
 24	first	first	ADJ	JJ	Degree=Pos|NumType=Ord	25	amod	_	_	_	_							_
 25	volume	volume	NOUN	NN	Number=Sing	21	parataxis	_	_	)	_
 26	at	at	ADP	IN	_	27	case	_	_	_	_				_		_
-27	Moscow	Moscow	PROPN	NNP	Number=Sing	25	orphan	_	_	(EntityID=4|MentionID=markable_5|Min=27|SemType=dn)	_	_
+27	Moscow	Moscow	PROPN	NNP	Number=Sing	25	orphan	_	_	(EntityID=4|MentionID=markable_5|Min=27|SemType=dn)		_
 28	in	in	ADP	IN	_	29	case	_	_	_					_		_	_
-29	1849	1849	NUM	CD	NumType=Card	25	orphan	_	_					(EntityID=5|MentionID=markable_6|Min=29|SemType=dn)	_
+29	1849	1849	NUM	CD	NumType=Card	25	orphan	_	_					(EntityID=5|MentionID=markable_6|Min=29|SemType=dn)	
 30	,	,	PUNCT	,	_	32	punct	_	_	_					_		_	_
 31	the	the	DET	DT	Definite=Def|PronType=Art	32	det	_	_			(EntityID=6|MarkableID=markable_7|Min=31|SemType=dn	MarkableID=markable_7|Rel=poss|MentionAnchor=markable_1|EntityAnchor=1
 32	second	second	ADJ	JJ	Degree=Pos|NumType=Ord	25	conj	_	_	_
