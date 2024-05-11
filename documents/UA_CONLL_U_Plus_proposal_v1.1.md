@@ -246,7 +246,7 @@ Although some of these types of anaphoric reference  (e.g., split antecedent ana
 17	them	they	PRON	PRP	Case=Acc|Number=Plur|Person=3|PronType=Prs	2	nmod	_	_   	(EntityId=4|MarkableID=markable_6|Min=17|SemType=do))	_
 ```
 
-  * Note that a distinct Split layer was proposed in the original markup document, but was subsequently eliminated.
+  * Note: a separate Split layer was originally proposed, but was subsequently eliminated and the ElementOf information included in the Identity layer.
 
 ### Bridging references
 
@@ -340,7 +340,7 @@ door         )
 ### Reference
 
   * The Reference column is used to represent direct reference. This can be used both to encode references to the visual situation in multimodal data (e.g., in the TRAINS subset of ARRAU, or in GNOME), and entity linking or 'Wikification' (e.g., in GUM)
-  * In the following example of use of the Reference column to encode entity linking we only illustrate the Reference column ignoring SPlit, Bridging and Discourse_Deixis. The Reference column is filled with the Wikipedia link for the entity.
+  * In the following example of use of the Reference column to encode entity linking we only illustrate the Reference column ignoring Bridging and Discourse_Deixis. The Reference column is filled with the Wikipedia link for the entity.
 
 ```
 # global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY  BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
@@ -376,11 +376,32 @@ _
 
 * In corpora such as TRAINS, Light, or the Minecraft Dialogue Corpus, the objects referred to are predefined. In such corpora, it is possible to start the annotation by listing these objects at the beginning of the document so that references can be linked to them. This could be done in the present format by adding a # visual_situation line after the # sent_id line, followed by separate lines for every object in the scene. This description of the visual situation may occur only once at the beginning of the document if the visual situation is static, else be repeated every time that the situation changes. (Need to  check if CONLL-U-Plus rules allow this or if we need to add a pseudo-sentence at the beginning of the document / every time the visual situation changes.)
 
-* In the following example from the TRAINS corpus 
+* In the following example from the TRAINS corpus, the visual situation is staticc and therefore its description only occurs once at the beginning of the document. The description consists of a separate line for each of the 18 entities in the visual situation - the two participants to the conversation (manager M, system S) , 5 towns, 3 engines located at the towns, 4 boxcars, etcc. Each line contains in the REFERENCE column the ID of the entity, its name if it has one, and its typee. Further attributes may be specified in multimodal contexts, such as the coordinates of the object, its bounding box, and/or its ID in the simulation state if the interaction is with a simulated virtual world. 
 
 ```
 # global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = d91-1-1
+
+# visual_situation
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS1|EntityName=M|Entity_Type=Manager
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS2|EntityName=S|Entity_Type=System
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS3|EntityName=Avon|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS4|EntityName=Bath|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS5|EntityName=Corning|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS6|EntityName=Dansville|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS7|EntityName=Elmira|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS8|EntityName=E1|Entity_Type=Engine|Loc=VS3
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS9|EntityName=E2|Entity_Type=Engine|Loc=VS7
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS10|EntityName=E3|Entity_Type=Engine|Loc=VS7
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS11|Entity_Type=Boxcar|Loc=VS4
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS12|Entity_Type=Boxcar|Loc=VS4
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS13|Entity_Type=Boxcar|Loc=VS6
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS14|Entity_Type=Boxcar|Loc=VS7
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS15|Entity_Type=Tanker_Car|Loc=VS5
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS16|Entity_Type=Banana_Warehouse|Loc=VS3
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS17|Entity_Type=Orange_Warehouse|Loc=VS5
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS18|Entity_Type=OJ_Factory|Loc=VS7
+
 # sent_id = d91-1-1_1.1
 # speaker_id = M
 # text = okay
@@ -389,7 +410,7 @@ _
 # sent_id = 1.2
 # speaker_id = M
 # text = I have to
-2	I	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn) 	_	_	M	_
+2	I	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn) 	_	_	VS1	_
 3	have	_	_	_	_	_	_	_	_	_
 4	to	_	_	_	_	_	_	_	_	_
 
@@ -403,7 +424,7 @@ _
 8	of	_	_	_	_	_	_	_	_	_
 9	oranges	_	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_3|Min=9|SemType=dn))
 10	to	_	_	_	_	_	_	_	_	
-11	Bath	_	_	_	_	_	_	_	_	(EntityID=4|MarkableID=markable_4|Min=11|SemType=dn)		_	_	Bath
+11	Bath	_	_	_	_	_	_	_	_	(EntityID=4|MarkableID=markable_4|Min=11|SemType=dn)		_	_	VS4
 12	by	_	_	_	_	_	_	_	_
 13	8       _	_	_	_	_	_	_	_
 14	o'clock _	_	_	_	_	_	_	_
