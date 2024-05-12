@@ -8,9 +8,9 @@ This document illustrates the proposed extensions to Universal Dependencies' CoN
 
 The proposed format is meant to encode the same information as, and be convertible to and from,  the 'compact' UA formats  based on the CONLL-U format and using the Misc column to encode all information ("CONLL-U-Compact") proposed by Anna Nedoluzhko and Amir Zeldes.
 
-## Basic Non-Anaphoric Layers
+## Non-Anaphoric Layers
 
-### Basic layers
+### Universal Dependencies layers
 
   * We adopt the CONLL-U spec for all the basic layers up to the MISC column - 10 layers in total including Misc.
   * Following the CONLL-U-PLUS format, each document is preceded by a global.columns line specifying the columns
@@ -48,10 +48,7 @@ The proposed format is meant to encode the same information as, and be convertib
 
 ## The Core Anaphoric Layers
 
-###  The mandatory identity layer
-
-
-
+###  The (mandatory) Identity layer
 
   * identity reference information is specified in the IDENTITY column.
     (The Identity layer is the 11th column, after MISC. Note: in CONLL Coref other layers, such as WordSense, Constituency, and Propbank, were also included before the coreference layer, we need to decide what to do about those. In the present version of the proposal they FOLLOW the anaphoric layers.
@@ -92,106 +89,6 @@ The proposed format is meant to encode the same information as, and be convertib
 17	T-town	_	_	_	_	_	_	_	_	
 18	”	_	_	_	_	_	_	_	_	)
 ```
-
-
-
-### Optional core anaphoric layer: minimum span / entity heads
-
-  * For fuzzy matching and other purposes, it can be useful to have a minimum or core span which systems must identify for each entity, as originally proposed in MUC
-  * In most contexts, this will be the syntactic head of the phrase, but there are some cases in which the syntactic head according to UD is not appropriate for anaphoric purposes (e.g., in coordination) and we need some facilities in case the min span is multiple, possible discontinuous tokens 
-  * In UA exploded, a MIN feature can added to the IDENTITY column in the line of the first token in the markable.
-
-```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
-# newdoc id = GUM_voyage_tulsa
-# sent_id = GUM_voyage_tulsa-1
-# text = Tulsa
-1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1)
-
-# sent_id = GUM_voyage_tulsa-2
-# text = Tulsa is in the Green Country region of Oklahoma
-2	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_2|Min=2)
-3	is	_	_	_	_	_	_	_	_	_
-4	in	_	_	_	_	_	_	_	_	_
-5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7
-6	Green	_	_	_	_	_	_	_	_	_	_
-7	Country	_	_	_	_	_	_	_	_	_
-8	region	_	_	_	_	_	_	_	_	_
-9	of	_	_	_	_	_	_	_	_	_
-10	Oklahoma	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_4|Min=10)) 
-11	.	_	_	_	_	_	_	_	_
-
-# sent_id = GUM_voyage_tulsa-3
-# text = It is also called "T-town"
-12	It	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_5|Min=12)
-13	is	_	_	_	_	_	_	_	_	_
-14	also	_	_	_	_	_	_	_	_	_
-15	called	_	_	_	_	_	_	_	_	_
-16	“	_	_	_	_	_	_	_	_	(EntityID=4-Pseudo|MarkableID=markable_6|Min=17
-17	T-town	_	_	_	_	_	_	_	_	
-18	”	_	_	_	_	_	_	_	_	)
-```
-
-* For multi-head words such as *New York*, the range of  the min span is specified
-
-```
-# newdoc id = Artificial_example
-# sent_id = Artificial_example-1
-# text = New York is a big city
-1	New	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=1|Min=1,2
-2	York	_	_	_	_	_	_	_	_	)
-3	is	_	_	_	_	_	_	_	_ 	_
-4	a	_	_	_	_	_	_	_	_	(EntityID=2-Pseudo|MarkableID=2|Min=6
-5	big	_	_	_	_	_	_	_	_	_
-6	city	_	_	_	_	_	_	_	_	)
-```
-
-### Optional core anaphoric layer: SemType
-
-  * The SemType layer provides information about the semantic function of the noun phrase: whether it is referential or not, i.e., whether it refers to a discourse entity (and in  this case, whether the entity is Discourse New - DN - or Discourse Old - DO), or expletive, predicate, quantifier, coordination, or some other type of non-referring expression (e.g., an idiom)
-  * In CRAC, the SemType argument was called REFERENCE and was specified for every token of a markable. In UA, this information is provided it only once, as an (optional) feature on the Identity column on the first line of the markable.
-  * The values of this attribute for ARRAU are **dn, do, predicate, quantifier, coordination, expletive, idiom, undef_reference, incomplete** but different corpora will use different values, unifiying this aspects could be one of the objectives of UA 2.
-
-
-
-```
-# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
-# newdoc id = GUM_voyage_tulsa
-# sent_id = GUM_voyage_tulsa-1
-# text = Tulsa
-1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)
-
-# sent_id = GUM_voyage_tulsa-2
-# text = Tulsa is in the Green Country region of Oklahoma
-2	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_2|Min=2|SemType=do)
-3	is	_	_	_	_	_	_	_	_	_
-4	in	_	_	_	_	_	_	_	_	_
-5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7|SemType=dn
-6	Green	_	_	_	_	_	_	_	_	_	_
-7	Country	_	_	_	_	_	_	_	_	_
-8	region	_	_	_	_	_	_	_	_	_
-9	of	_	_	_	_	_	_	_	_
-_
-10	Oklahoma	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_4|Min=10|SemType=dn)) 
-11	.	_	_	_	_	_	_	_	_
-
-# sent_id = GUM_voyage_tulsa-3
-# text = It is also called "T-town"
-12	It	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_5|Min=12|SemType=do)
-13	is	_	_	_	_	_	_	_	_	_
-14	also	_	_	_	_	_	_	_	_	_
-15	called	_	_	_	_	_	_	_	_	_
-16	“	_	_	_	_	_	_	_	_	(EntityID=4-Pseudo|MarkableID=markable_6|Min=17|SemType=predicate
-17	T-town	_	_	_	_	_	_	_	_	
-18	”	_	_	_	_	_	_	_	_	)
-```
-
-
-
-## The Additional Anaphoric and Reference Layers
-
-In addition to the mandatory Identity layer, we want to be able to encode additional types of anaphoric reference annotated in a number of existing corpora, as well as deictic reference to the outside world.
-Although some of these types of anaphoric reference  (e.g., split antecedent anaphors, discourse deixis) could be seen as types of Identity reference, we suggest to encode each of these  additional layers of anaphoric reference in its own dedicated column. 
 
 ### Split antecedent anaphors
 
@@ -247,6 +144,125 @@ Although some of these types of anaphoric reference  (e.g., split antecedent ana
 ```
 
   * Note: a separate Split layer was originally proposed, but was subsequently eliminated and the ElementOf information included in the Identity layer.
+
+### Discontinuous markables
+
+* Discontinuous markables are to be represented by bracketing every chunk  of the markable and indicating the markable to which each chunk belongs.
+
+```
+# newdoc id = Artificial_example_2
+# sent_id = Artificial_example-1
+# text = The man I saw with a fancy jacket
+                Identity						     
+1    The        (EntityID=1|MarkableID=markable_1|Min=2|SemType=dn
+2    man     	)
+3    I		(EntityID=2|MarkableID=markable_2|Min=3|SemType=dn)
+4    saw
+5    with
+6    a		(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn@(EntityID=3|MarkableID=markable_3|Min=8|SemType=dn    
+7    fancy
+8    jacket     ))
+```
+
+
+### Optional information in the core anaphoric layer: minimum span / entity heads
+
+  * For fuzzy matching and other purposes, it can be useful to have a minimum or core span which systems must identify for each entity, as originally proposed in MUC
+  * In most contexts, this will be the syntactic head of the phrase, but there are some cases in which the syntactic head according to UD is not appropriate for anaphoric purposes (e.g., in coordination) and we need some facilities in case the min span is multiple, possible discontinuous tokens 
+  * In UA exploded, a MIN feature can added to the IDENTITY column in the line of the first token in the markable.
+
+```
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# newdoc id = GUM_voyage_tulsa
+# sent_id = GUM_voyage_tulsa-1
+# text = Tulsa
+1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1)
+
+# sent_id = GUM_voyage_tulsa-2
+# text = Tulsa is in the Green Country region of Oklahoma
+2	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_2|Min=2)
+3	is	_	_	_	_	_	_	_	_	_
+4	in	_	_	_	_	_	_	_	_	_
+5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7
+6	Green	_	_	_	_	_	_	_	_	_	_
+7	Country	_	_	_	_	_	_	_	_	_
+8	region	_	_	_	_	_	_	_	_	_
+9	of	_	_	_	_	_	_	_	_	_
+10	Oklahoma	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_4|Min=10)) 
+11	.	_	_	_	_	_	_	_	_
+
+# sent_id = GUM_voyage_tulsa-3
+# text = It is also called "T-town"
+12	It	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_5|Min=12)
+13	is	_	_	_	_	_	_	_	_	_
+14	also	_	_	_	_	_	_	_	_	_
+15	called	_	_	_	_	_	_	_	_	_
+16	“	_	_	_	_	_	_	_	_	(EntityID=4-Pseudo|MarkableID=markable_6|Min=17
+17	T-town	_	_	_	_	_	_	_	_	
+18	”	_	_	_	_	_	_	_	_	)
+```
+
+* For multi-head words such as *New York*, the range of  the min span is specified
+
+```
+# newdoc id = Artificial_example
+# sent_id = Artificial_example-1
+# text = New York is a big city
+1	New	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=1|Min=1,2
+2	York	_	_	_	_	_	_	_	_	)
+3	is	_	_	_	_	_	_	_	_ 	_
+4	a	_	_	_	_	_	_	_	_	(EntityID=2-Pseudo|MarkableID=2|Min=6
+5	big	_	_	_	_	_	_	_	_	_
+6	city	_	_	_	_	_	_	_	_	)
+```
+
+### Optional information in the core anaphoric layer: SemType
+
+  * The SemType layer provides information about the semantic function of the noun phrase: whether it is referential or not, i.e., whether it refers to a discourse entity (and in  this case, whether the entity is Discourse New - DN - or Discourse Old - DO), or expletive, predicate, quantifier, coordination, or some other type of non-referring expression (e.g., an idiom)
+  * In CRAC, the SemType argument was called REFERENCE and was specified for every token of a markable. In UA, this information is provided it only once, as an (optional) feature on the Identity column on the first line of the markable.
+  * The values of this attribute for ARRAU are **dn, do, predicate, quantifier, coordination, expletive, idiom, undef_reference, incomplete** but different corpora will use different values, unifiying this aspects could be one of the objectives of UA 2.
+
+
+
+```
+# global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
+# newdoc id = GUM_voyage_tulsa
+# sent_id = GUM_voyage_tulsa-1
+# text = Tulsa
+1	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=1|SemType=dn)
+
+# sent_id = GUM_voyage_tulsa-2
+# text = Tulsa is in the Green Country region of Oklahoma
+2	Tulsa	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_2|Min=2|SemType=do)
+3	is	_	_	_	_	_	_	_	_	_
+4	in	_	_	_	_	_	_	_	_	_
+5	the	_	_	_	_	_	_	_	_	(EntityID=2|MarkableID=markable_3|Min=7|SemType=dn
+6	Green	_	_	_	_	_	_	_	_	_	_
+7	Country	_	_	_	_	_	_	_	_	_
+8	region	_	_	_	_	_	_	_	_	_
+9	of	_	_	_	_	_	_	_	_
+_
+10	Oklahoma	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_4|Min=10|SemType=dn)) 
+11	.	_	_	_	_	_	_	_	_
+
+# sent_id = GUM_voyage_tulsa-3
+# text = It is also called "T-town"
+12	It	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_5|Min=12|SemType=do)
+13	is	_	_	_	_	_	_	_	_	_
+14	also	_	_	_	_	_	_	_	_	_
+15	called	_	_	_	_	_	_	_	_	_
+16	“	_	_	_	_	_	_	_	_	(EntityID=4-Pseudo|MarkableID=markable_6|Min=17|SemType=predicate
+17	T-town	_	_	_	_	_	_	_	_	
+18	”	_	_	_	_	_	_	_	_	)
+```
+
+
+
+# Additional Anaphoric and Reference Layers (Optional)
+
+In addition to the mandatory Identity layer, we want to be able to encode additional types of anaphoric reference annotated in a number of existing corpora, as well as deictic reference to the outside world.
+Although some of these types of anaphoric reference  (e.g., split antecedent anaphors, discourse deixis) could be seen as types of Identity reference, we suggest to encode each of these  additional layers of anaphoric reference in its own dedicated column. 
+
 
 ### Bridging references
 
@@ -382,25 +398,26 @@ _
 # global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC IDENTITY BRIDGING DISCOURSE_DEIXIS REFERENCE NOM_SEM
 # newdoc id = d91-1-1
 
-# visual_situation
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS1|EntityName=M|Entity_Type=Manager
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS2|EntityName=S|Entity_Type=System
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS3|EntityName=Avon|Entity_Type=Town
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS4|EntityName=Bath|Entity_Type=Town
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS5|EntityName=Corning|Entity_Type=Town
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS6|EntityName=Dansville|Entity_Type=Town
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS7|EntityName=Elmira|Entity_Type=Town
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS8|EntityName=E1|Entity_Type=Engine|Loc=VS3
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS9|EntityName=E2|Entity_Type=Engine|Loc=VS7
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS10|EntityName=E3|Entity_Type=Engine|Loc=VS7
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS11|Entity_Type=Boxcar|Loc=VS4
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS12|Entity_Type=Boxcar|Loc=VS4
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS13|Entity_Type=Boxcar|Loc=VS6
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS14|Entity_Type=Boxcar|Loc=VS7
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS15|Entity_Type=Tanker_Car|Loc=VS5
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS16|Entity_Type=Banana_Warehouse|Loc=VS3
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS17|Entity_Type=Orange_Warehouse|Loc=VS5
-0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VS18|Entity_Type=OJ_Factory|Loc=VS7
+# visual_situation vs0
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE1|EntityName=M|Entity_Type=Manager
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE2|EntityName=S|Entity_Type=System
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE3|EntityName=Avon|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE4|EntityName=Bath|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE5|EntityName=Corning|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE6|EntityName=Dansville|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE7|EntityName=Elmira|Entity_Type=Town
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE8|EntityName=E1|Entity_Type=Engine|Loc=VSE3
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE9|EntityName=E2|Entity_Type=Engine|Loc=VSE7
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE10|EntityName=E3|Entity_Type=Engine|Loc=VSE7
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE11|Entity_Type=Boxcar|Loc=VSE4
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE12|Entity_Type=Boxcar|Loc=VSE4
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE13|Entity_Type=Boxcar|Loc=VSE6
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE14|Entity_Type=Boxcar|Loc=VSE7
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE15|Entity_Type=Tanker_Car|Loc=VSE5
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE16|Entity_Type=Banana_Warehouse|Loc=VSE3
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE17|Entity_Type=Orange_Warehouse|Loc=VSE5
+0	_	_	_	_	_	_	_	_	_	_	_	_	EntityId=VSE18|Entity_Type=OJ_Factory|Loc=VSE7
+# visual_situation_image trainsmap.pdf
 
 # sent_id = d91-1-1_1.1
 # speaker_id = M
@@ -410,7 +427,7 @@ _
 # sent_id = 1.2
 # speaker_id = M
 # text = I have to
-2	I	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn) 	_	_	VS1	_
+2	I	_	_	_	_	_	_	_	_	(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn) 	_	_	VSE1	_
 3	have	_	_	_	_	_	_	_	_	_
 4	to	_	_	_	_	_	_	_	_	_
 
@@ -424,17 +441,17 @@ _
 8	of	_	_	_	_	_	_	_	_	_
 9	oranges	_	_	_	_	_	_	_	_	(EntityID=3|MarkableID=markable_3|Min=9|SemType=dn))
 10	to	_	_	_	_	_	_	_	_	
-11	Bath	_	_	_	_	_	_	_	_	(EntityID=4|MarkableID=markable_4|Min=11|SemType=dn)		_	_	VS4
+11	Bath	_	_	_	_	_	_	_	_	(EntityID=4|MarkableID=markable_4|Min=11|SemType=dn)		_	_	VSE4
 12	by	_	_	_	_	_	_	_	_
 13	8       _	_	_	_	_	_	_	_
 14	o'clock _	_	_	_	_	_	_	_
 15	today	_	_	_	_	_	_	_	_
 ```
 
-## Additional Non-Anaphoric Layers
+# Additional Non-Anaphoric Layers
 
-In addition to the anaphoric layers, we expect documents in Universal Anaphora format will contain other linguistic information relevant to anaphoric interpretation, including the Constituency, Wordsense and Proposition information contained in the Ontonotes corpus, the Nom_Sem information (entity type, genericity, etc) contained in GNOME and ARRAU, the RST information contained in GUM, etc.
-The format should allow additional columns for this information. In  the examples below, these additional columns are located after the Anaphoric columns in the order
+In addition to the anaphoric layers, we expect documents in Universal Anaphora format will contain other linguistic information relevant to anaphoric interpretation, including the Constituency, Wordsense and Proposition information contained in the Ontonotes corpus, the Nom_Sem information (entity type, genericity, etc) contained in GNOME and ARRAU, the RST information contained in GUM, the SDRT information contained in the Minecraft Dialogue Corpus annotated acccording to SDRT, etc.
+The format should allow additional columns for this information. In  the examples below, these additional columns are located after the Anaphoric and Reference columns in the order
 
 
 * Nom_Sem
@@ -442,6 +459,7 @@ The format should allow additional columns for this information. In  the example
 * Wordsense
 * Proposition
 * RST
+* SDRT 
 
 but a different order is possible using the CONLL-U Plus format. In the examples below, empty columns are used except for the core anaphoric layers and the additional non-anaphoric layers.
 
@@ -487,6 +505,7 @@ _
 ### Constituency, Wordsense, Proposition, and other CONLL Coref layers
 
   * This additional information available in the CONLL 2012 corpus should be encoded using additional columns which could e.g., follow the Nom_Sem column
+  * Such additional layeers could also be used e.g., for Abstract Meaning Representation (AMR) information
 
   
 ### RST Layer
@@ -535,27 +554,17 @@ _
 35	Petersburg	Petersburg	PROPN	NNP	Number=Sing	34	flat	_	_						_
 ```
 
+#  Still to be added to the document
 
+## Zero Anaphora
 
-## Discontinuous markables
+* Types of zero anaphora
 
-* Discontinuous markables are to be represented by bracketing every chunk  of the markable and indicating the markable to which each chunk belongs.
+* What kind of zero anaphors can currently be represented and how
 
-```
-# newdoc id = Artificial_example_2
-# sent_id = Artificial_example-1
-# text = The man I saw with a fancy jacket
-                Identity						     
-1    The        (EntityID=1|MarkableID=markable_1|Min=2|SemType=dn
-2    man     	)
-3    I		(EntityID=2|MarkableID=markable_2|Min=3|SemType=dn)
-4    saw
-5    with
-6    a		(EntityID=1|MarkableID=markable_1|Min=2|SemType=dn@(EntityID=3|MarkableID=markable_3|Min=8|SemType=dn    
-7    fancy
-8    jacket     ))
-```
+#  Still to be discussed 
 
 ## Ambiguity
 
 * For corpora which allow annotators to mark multiple interpretations, the additional interpretations can be provided by repeating some of the columns - e.g., by adding an Identity2 column, etc.
+
