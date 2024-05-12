@@ -258,7 +258,7 @@ _
 
 
 
-# Additional Anaphoric and Reference Layers (Optional)
+## Additional Anaphoric and Reference Layers (Optional)
 
 In addition to the mandatory Identity layer, we want to be able to encode additional types of anaphoric reference annotated in a number of existing corpora, as well as deictic reference to the outside world.
 Although some of these types of anaphoric reference  (e.g., split antecedent anaphors, discourse deixis) could be seen as types of Identity reference, we suggest to encode each of these  additional layers of anaphoric reference in its own dedicated column. 
@@ -448,7 +448,7 @@ _
 15	today	_	_	_	_	_	_	_	_
 ```
 
-# Additional Non-Anaphoric Layers
+## Additional Non-Anaphoric Layers
 
 In addition to the anaphoric layers, we expect documents in Universal Anaphora format will contain other linguistic information relevant to anaphoric interpretation, including the Constituency, Wordsense and Proposition information contained in the Ontonotes corpus, the Nom_Sem information (entity type, genericity, etc) contained in GNOME and ARRAU, the RST information contained in GUM, the SDRT information contained in the Minecraft Dialogue Corpus annotated acccording to SDRT, etc.
 The format should allow additional columns for this information. In  the examples below, these additional columns are located after the Anaphoric and Reference columns in the order
@@ -554,17 +554,17 @@ _
 35	Petersburg	Petersburg	PROPN	NNP	Number=Sing	34	flat	_	_						_
 ```
 
-#  Still to be added to the document
+##  Still to be added to the document
 
-## Zero Anaphora
+### Zero Anaphora
 
 * Types of zero anaphora
 
 * What kind of zero anaphors can currently be represented and how
 
-#  Still to be discussed 
+##  Still to be discussed 
 
-## Ambiguity
+### Ambiguity
 
 * For corpora which allow annotators to mark multiple interpretations, the additional interpretations can be provided by repeating some of the columns - e.g., by adding an Identity2 column, etc.
 
